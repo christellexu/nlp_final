@@ -1,15 +1,17 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import csv
 import sklearn
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.stem.porter import *
+from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk import WordNetLemmatizer
 from nltk import stem
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import CountVectorizer
-import nltkx
+import nltk
 import re
 
 
@@ -76,7 +78,7 @@ gillette_words = gillette_words.apply(lambda x: [item for item in x if item not 
 pantene_words = pantene_words.apply(lambda x: [item for item in x if item not in stop_words])
 
 
-#-----Stemming & Lemmentization-----
+#-----Lemmentization-----
 lemmatizer = WordNetLemmatizer()
 
 always_lemm = always_words.apply(lambda x: [lemmatizer.lemmatize(i) for i in x])
@@ -85,7 +87,40 @@ tampax_lemm = tampax_words.apply(lambda x: [lemmatizer.lemmatize(i) for i in x])
 gillette_lemm = gillette_words.apply(lambda x: [lemmatizer.lemmatize(i) for i in x])
 pantene_lemm = pantene_words.apply(lambda x: [lemmatizer.lemmatize(i) for i in x])
 
+always_join = always_lemm.apply(lambda x: [" ".join(x)])
+# oralb_join = oralb_lemm.apply(lambda x: [" ".join(x)])
+tampax_join = tampax_lemm.apply(lambda x: [" ".join(x)])
+gillette_join = gillette_lemm.apply(lambda x: [" ".join(x)])
+pantene_join = pantene_lemm.apply(lambda x: [" ".join(x)])
 
+#reformat cause I have a list of lists
+
+always_together = [item for sublist in always_join for item in sublist]
+# oralb_together = [item for sublist in oralb_join for item in sublist]
+tampax_together = [item for sublist in tampax_join for item in sublist]
+gillette_together = [item for sublist in gillette_join for item in sublist]
+pantene_together = [item for sublist in pantene_join for item in sublist]
+#is the funky u gonna be an issue
+
+
+#-----Bag of Words-----
+vectorizer = CountVectorizer()
+# np.set_printoptions(threshold='nan')
+
+always_vectorizer = vectorizer.fit_transform(always_together)
+always_vector = always_vectorizer.toarray()
+
+# oralb_vectorizer = vectorizer.fit_transform(oralb_together)
+# oralb_vector = always_vectorizer.toarray()
+
+tampax_vectorizer = vectorizer.fit_transform(tampax_together)
+tampax_vector = tampax_vectorizer.toarray()
+
+gillette_vectorizer = vectorizer.fit_transform(gillette_together)
+gillette_vector = gillette_vectorizer.toarray()
+
+pantene_vectorizer = vectorizer.fit_transform(pantene_together)
+pantene_vector = pantene_vectorizer.toarray()
 
 
 
